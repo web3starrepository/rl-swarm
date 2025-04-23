@@ -73,35 +73,11 @@ if [ -f "modal-login/temp-data/userData.json" ]; then
     fi
     
     # Start the dev server
+    PORT=3000
     npm run dev > server.log 2>&1 &
     SERVER_PID=$!
+    echo -e "${GREEN}${BOLD}[✓] Server is running on fixed port 3000${NC}"
     MAX_WAIT=30  
-    
-    # 原等待逻辑（MAX_WAIT=30）
-    # 原错误循环结构已修正为：
-    for ((i = 0; i < MAX_WAIT; i++)); do
-    if grep -q "Local:        http://localhost:" server.log; then
-    PORT=$(grep "Local:        http://localhost:" server.log | sed -n 's/.*http:\/\/localhost:\([0-9]*\).*/\1/p')
-    if [ -n "$PORT" ]; then
-    echo -e "${GREEN}${BOLD}[✓] Server is running successfully on port $PORT.${NC}"
-    break
-    fi
-    fi  # 已添加缺失的fi
-    sleep 1
-    done
-    
-    # 建议修改为以下增强版检测逻辑
-    MAX_WAIT=60  # 延长等待时间到60秒
-    PORT=""
-    for ((i = 0; i < MAX_WAIT; i++)); do
-    # 增强日志解析逻辑
-    if [ -f server.log ]; then
-        PORT_LINE=$(grep -m1 "Local:.*http://localhost:" server.log)
-        if [[ "$PORT_LINE" =~ ([0-9]+)$ ]]; then
-            PORT=${BASH_REMATCH[1]}
-            [ -n "$PORT" ] && break
-        fi
-    fi
     
     # 服务器进程检查
     if ! ps -p $SERVER_PID > /dev/null; then
