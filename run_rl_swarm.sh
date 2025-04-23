@@ -94,14 +94,27 @@ if [ -f "modal-login/temp-data/userData.json" ]; then
     MAX_WAIT=60  # 延长等待时间到60秒
     PORT=""
     for ((i = 0; i < MAX_WAIT; i++)); do
-    if [ -f server.log ] && grep -q "Local:        http://localhost:" server.log; then
-    PORT=$(grep "Local:        http://localhost:" server.log | awk -F':' '/Local/{print $NF}' | tr -cd '0-9')
-    [ -n "$PORT" ] && break
+    # 增强日志解析逻辑
+    if [ -f server.log ]; then
+        PORT_LINE=$(grep -m1 "Local:.*http://localhost:" server.log)
+        if [[ "$PORT_LINE" =~ ([0-9]+)$ ]]; then
+            PORT=${BASH_REMATCH[1]}
+            [ -n "$PORT" ] && break
+        fi
     fi
-    # 添加服务器进程存活检查
+    
+    # 服务器进程检查
     if ! ps -p $SERVER_PID > /dev/null; then
-    echo -e "${RED}${BOLD}[✗] 服务器进程异常退出${NC}"
-    exit 1
+        echo -e "${RED}${BOLD}[✗] 服务器进程异常退出${NC}"
+        exit 1
+    fi
+    
+    # 超时处理
+    if [ $i -eq $((MAX_WAIT - 1)) ]; then
+        echo -e "${YELLOW}${BOLD}[!] 调试信息：最后检测的server.log内容${NC}"
+        tail -n 20 server.log
+        echo -e "\n${RED}${BOLD}[✗] 获取端口失败，请检查：\n1. 手动查看 server.log 确认日志格式\n2. 开发服务器是否正常启动\n3. 尝试增加 MAX_WAIT 值（当前值：$MAX_WAIT）${NC}"
+        exit 1
     fi
     sleep 1
     done
