@@ -85,15 +85,6 @@ if [ -f "modal-login/temp-data/userData.json" ]; then
         exit 1
     fi
     
-    # 超时处理
-    if [ $i -eq $((MAX_WAIT - 1)) ]; then
-        echo -e "${YELLOW}${BOLD}[!] 调试信息：最后检测的server.log内容${NC}"
-        tail -n 20 server.log
-        echo -e "\n${RED}${BOLD}[✗] 获取端口失败，请检查：\n1. 手动查看 server.log 确认日志格式\n2. 开发服务器是否正常启动\n3. 尝试增加 MAX_WAIT 值（当前值：$MAX_WAIT）${NC}"
-        exit 1
-    fi
-    sleep 1
-    done
     
     if [ $i -eq $MAX_WAIT ]; then
         echo -e "${RED}${BOLD}[✗] Timeout waiting for server to start.${NC}"
