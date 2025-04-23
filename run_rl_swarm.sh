@@ -363,7 +363,7 @@ else
 
     echo -e "${CYAN}${BOLD}[✓] 等待 API 密钥激活...${NC}"
     while true; do
-        STATUS=$(curl -s "http://localhost:3000/api/get-api-key-status?orgId=$ORG_ID")
+        STATUS=$(curl -s --noproxy localhost "http://localhost:3000/api/get-api-key-status?orgId=$ORG_ID")
         if [[ "$STATUS" == "activated" ]]; then
             echo -e "${GREEN}${BOLD}[✓] 成功！API 密钥已激活！继续进行...\n${NC}"
             break
