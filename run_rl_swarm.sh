@@ -50,11 +50,11 @@ if [ -f "modal-login/temp-data/userData.json" ]; then
     if ! command -v ss &>/dev/null; then
       echo -e "${YELLOW}[!] 'ss' not found. Attempting to install 'iproute2'...${NC}"
       if command -v apt &>/dev/null; then
-        sudo apt update && sudo apt install -y iproute2
+        apt update && apt install -y iproute2
       elif command -v yum &>/dev/null; then
-        sudo yum install -y iproute
+        yum install -y iproute
       elif command -v pacman &>/dev/null; then
-        sudo pacman -Sy iproute2
+        pacman -Sy iproute2
       else
         echo -e "${RED}[✗] Could not install 'ss'. Package manager not found.${NC}"
         exit 1
@@ -127,11 +127,11 @@ else
     if ! command -v ss &>/dev/null; then
       echo -e "${YELLOW}[!] 'ss' not found. Attempting to install 'iproute2'...${NC}"
       if command -v apt &>/dev/null; then
-        sudo apt update && sudo apt install -y iproute2
+        apt update && apt install -y iproute2
       elif command -v yum &>/dev/null; then
-        sudo yum install -y iproute
+        yum install -y iproute
       elif command -v pacman &>/dev/null; then
-        sudo pacman -Sy iproute2
+        pacman -Sy iproute2
       else
         echo -e "${RED}[✗] Could not install 'ss'. Package manager not found.${NC}"
         exit 1
@@ -187,7 +187,7 @@ else
             return 1
         fi
         chmod +x cloudflared
-        sudo mv cloudflared /usr/local/bin/
+        mv cloudflared /usr/local/bin/
         if [ $? -ne 0 ]; then
             echo -e "${RED}${BOLD}[✗] Failed to move cloudflared to /usr/local/bin/.${NC}"
             return 1
@@ -214,7 +214,7 @@ else
             rm ngrok.tgz
             return 1
         fi
-        sudo mv ngrok /usr/local/bin/
+        mv ngrok /usr/local/bin/
         if [ $? -ne 0 ]; then
             echo -e "${RED}${BOLD}[✗] Failed to move ngrok to /usr/local/bin/.${NC}"
             rm ngrok.tgz
