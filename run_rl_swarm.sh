@@ -18,6 +18,15 @@ export IDENTITY_PATH
 export ORG_ID
 export HF_HUB_DOWNLOAD_TIMEOUT=120
 
+# HuggingFace镜像配置
+DEFAULT_HF_ENDPOINT="https://hf-mirror.com"
+HF_ENDPOINT=${HF_ENDPOINT:-$DEFAULT_HF_ENDPOINT}
+export HF_ENDPOINT
+export HF_HOME="$HOME/.cache/huggingface"
+export PIP_INDEX_URL="https://pypi.tuna.tsinghua.edu.cn/simple"
+export HF_DATASETS_CACHE="$HOME/.cache/huggingface/datasets"
+export TRANSFORMERS_CACHE="$HOME/.cache/huggingface/transformers"
+
 DEFAULT_PUB_MULTI_ADDRS=""
 PUB_MULTI_ADDRS=${PUB_MULTI_ADDRS:-$DEFAULT_PUB_MULTI_ADDRS}
 
@@ -366,8 +375,8 @@ else
 fi
 
 echo -e "${CYAN}${BOLD}[✓] 正在安装所需的 Python 包，根据网络速度可能需要几分钟...${NC}"
-pip install --disable-pip-version-check -q -r "$ROOT"/requirements-hivemind.txt > /dev/null
-pip install --disable-pip-version-check -q -r "$ROOT"/requirements.txt > /dev/null
+pip install --disable-pip-version-check -q -r "$ROOT"/requirements-hivemind.txt -i $PIP_INDEX_URL > /dev/null
+pip install --disable-pip-version-check -q -r "$ROOT"/requirements.txt -i $PIP_INDEX_URL > /dev/null
 
 echo -e "${GREEN}${BOLD}>>> 太棒了，所有包都安装成功！\n${NC}"
 
