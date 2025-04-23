@@ -77,15 +77,31 @@ if [ -f "modal-login/temp-data/userData.json" ]; then
     SERVER_PID=$!
     MAX_WAIT=30  
     
+    # 原等待逻辑（MAX_WAIT=30）
     for ((i = 0; i < MAX_WAIT; i++)); do
-        if grep -q "Local:        http://localhost:" server.log; then
-            PORT=$(grep "Local:        http://localhost:" server.log | sed -n 's/.*http:\/\/localhost:\([0-9]*\).*/\1/p')
-            if [ -n "$PORT" ]; then
-                echo -e "${GREEN}${BOLD}[✓] Server is running successfully on port $PORT.${NC}"
-                break
-            fi
-        fi
-        sleep 1
+    if grep -q "Local:        http://localhost:" server.log; then
+    PORT=$(grep "Local:        http://localhost:" server.log | sed -n 's/.*http:\/\/localhost:\([0-9]*\).*/\1/p')
+    if [ -n "$PORT" ]; then
+    echo -e "${GREEN}${BOLD}[✓] Server is running successfully on port $PORT.${NC}"
+    break
+    fi
+    sleep 1
+    done
+    
+    # 建议修改为以下增强版检测逻辑
+    MAX_WAIT=60  # 延长等待时间到60秒
+    PORT=""
+    for ((i = 0; i < MAX_WAIT; i++)); do
+    if [ -f server.log ] && grep -q "Local:        http://localhost:" server.log; then
+    PORT=$(grep "Local:        http://localhost:" server.log | awk -F':' '/Local/{print $NF}' | tr -cd '0-9')
+    [ -n "$PORT" ] && break
+    fi
+    # 添加服务器进程存活检查
+    if ! ps -p $SERVER_PID > /dev/null; then
+    echo -e "${RED}${BOLD}[✗] 服务器进程异常退出${NC}"
+    exit 1
+    fi
+    sleep 1
     done
     
     if [ $i -eq $MAX_WAIT ]; then
