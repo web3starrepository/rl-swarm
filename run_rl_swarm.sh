@@ -30,8 +30,9 @@ HOST_MULTI_ADDRS=${HOST_MULTI_ADDRS:-$DEFAULT_HOST_MULTI_ADDRS}
 DEFAULT_IDENTITY_PATH="$ROOT"/swarm.pem
 IDENTITY_PATH=${IDENTITY_PATH:-$DEFAULT_IDENTITY_PATH}
 
+
 cleanup() {
-    echo -e "${YELLOW}${BOLD}[✓] Shutting down processes...${NC}"
+    echo -e "${YELLOW}${BOLD}[✓] 正在关闭进程...${NC}"
     kill $SERVER_PID 2>/dev/null || true
     kill $TUNNEL_PID 2>/dev/null || true
     exit 0
@@ -42,13 +43,13 @@ trap cleanup INT
 if [ -f "modal-login/temp-data/userData.json" ]; then
     cd modal-login
 
-    echo -e "\n${CYAN}${BOLD}[✓] Installing dependencies with npm. This may take a few minutes, depending on your internet speed...${NC}"
+    echo -e "\n${CYAN}${BOLD}[✓] 正在通过npm安装依赖，网络速度不同可能需要几分钟...${NC}"
     npm install --legacy-peer-deps
     
-    echo -e "\n${CYAN}${BOLD}[✓] Starting the development server...${NC}"
+    echo -e "\n${CYAN}${BOLD}[✓] 正在启动开发服务器...${NC}"
     # Ensure 'ss' is installed
     if ! command -v ss &>/dev/null; then
-      echo -e "${YELLOW}[!] 'ss' not found. Attempting to install 'iproute2'...${NC}"
+      echo -e "${YELLOW}[!] 未找到'ss'命令，尝试安装'iproute2'...${NC}"
       if command -v apt &>/dev/null; then
         apt update && apt install -y iproute2
       elif command -v yum &>/dev/null; then
@@ -56,7 +57,7 @@ if [ -f "modal-login/temp-data/userData.json" ]; then
       elif command -v pacman &>/dev/null; then
         pacman -Sy iproute2
       else
-        echo -e "${RED}[✗] Could not install 'ss'. Package manager not found.${NC}"
+        echo -e "${RED}[✗] 无法安装'ss'，未找到包管理器${NC}"
         exit 1
       fi
     fi
@@ -66,7 +67,7 @@ if [ -f "modal-login/temp-data/userData.json" ]; then
     if [ -n "$PORT_LINE" ]; then
       PID=$(echo "$PORT_LINE" | grep -oP 'pid=\K[0-9]+')
       if [ -n "$PID" ]; then
-        echo -e "${YELLOW}[!] Port 3000 is in use. Killing process: $PID${NC}"
+        echo -e "${YELLOW}[!] 端口3000已被占用，正在结束进程: $PID${NC}"
         kill -9 $PID
         sleep 2
       fi
@@ -76,7 +77,7 @@ if [ -f "modal-login/temp-data/userData.json" ]; then
     PORT=3000
     npm run dev > server.log 2>&1 &
     SERVER_PID=$!
-    echo -e "${GREEN}${BOLD}[✓] Server is running on fixed port 3000${NC}"
+    echo -e "${GREEN}${BOLD}[✓] 服务已在固定端口3000运行${NC}"
     MAX_WAIT=30  
     
     # 服务器进程检查
@@ -87,7 +88,7 @@ if [ -f "modal-login/temp-data/userData.json" ]; then
     
     
     if [ $i -eq $MAX_WAIT ]; then
-        echo -e "${RED}${BOLD}[✗] Timeout waiting for server to start.${NC}"
+        echo -e "${RED}${BOLD}[✗] 等待服务器启动超时${NC}"
         kill $SERVER_PID 2>/dev/null || true
         exit 1
     fi
@@ -99,10 +100,10 @@ if [ -f "modal-login/temp-data/userData.json" ]; then
 else
     cd modal-login
 
-    echo -e "\n${CYAN}${BOLD}[✓] Installing dependencies with npm. This may take a few minutes, depending on your internet speed...${NC}"
+    echo -e "\n${CYAN}${BOLD}[✓] 正在通过npm安装依赖，网络速度不同可能需要几分钟...${NC}"
     npm install --legacy-peer-deps
     
-    echo -e "\n${CYAN}${BOLD}[✓] Starting the development server...${NC}"
+    echo -e "\n${CYAN}${BOLD}[✓] 正在启动开发服务器...${NC}"
     # Ensure 'ss' is installed
     if ! command -v ss &>/dev/null; then
       echo -e "${YELLOW}[!] 'ss' not found. Attempting to install 'iproute2'...${NC}"
@@ -134,74 +135,74 @@ else
     SERVER_PID=$!
     MAX_WAIT=30  
 
-    echo -e "\n${CYAN}${BOLD}[✓] Detecting system architecture...${NC}"
+    echo -e "\n${CYAN}${BOLD}[✓] 正在检测系统架构...${NC}"
     ARCH=$(uname -m)
     OS=$(uname -s | tr '[:upper:]' '[:lower:]')
     if [ "$ARCH" = "x86_64" ]; then
         NGROK_ARCH="amd64"
         CF_ARCH="amd64"
-        echo -e "${GREEN}${BOLD}[✓] Detected x86_64 architecture.${NC}"
+        echo -e "${GREEN}${BOLD}[✓] 检测到x86_64架构${NC}"
     elif [ "$ARCH" = "arm64" ] || [ "$ARCH" = "aarch64" ]; then
         NGROK_ARCH="arm64"
         CF_ARCH="arm64"
-        echo -e "${GREEN}${BOLD}[✓] Detected ARM64 architecture.${NC}"
+        echo -e "${GREEN}${BOLD}[✓] 检测到ARM64架构${NC}"
     elif [[ "$ARCH" == arm* ]]; then
         NGROK_ARCH="arm"
         CF_ARCH="arm"
-        echo -e "${GREEN}${BOLD}[✓] Detected ARM architecture.${NC}"
+        echo -e "${GREEN}${BOLD}[✓] 检测到ARM架构${NC}"
     else
-        echo -e "${RED}[✗] Unsupported architecture: $ARCH. Please use a supported system.${NC}"
+        echo -e "${RED}[✗] 不支持的架构: $ARCH，请使用支持的系统${NC}"
         exit 1
     fi
 
     install_cloudflared() {
         if command -v cloudflared >/dev/null 2>&1; then
-            echo -e "${GREEN}${BOLD}[✓] Cloudflared is already installed.${NC}"
+            echo -e "${GREEN}${BOLD}[✓] Cloudflared 已经安装.${NC}"
             return 0
         fi
-        echo -e "\n${YELLOW}${BOLD}[✓] Installing cloudflared...${NC}"
+        echo -e "\n${YELLOW}${BOLD}[✓] 正在安装 cloudflared...${NC}"
         CF_URL="https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-$CF_ARCH"
         wget -q --show-progress "$CF_URL" -O cloudflared
         if [ $? -ne 0 ]; then
-            echo -e "${RED}${BOLD}[✗] Failed to download cloudflared.${NC}"
+            echo -e "${RED}${BOLD}[✗] 下载 cloudflared 失败.${NC}"
             return 1
         fi
         chmod +x cloudflared
         mv cloudflared /usr/local/bin/
         if [ $? -ne 0 ]; then
-            echo -e "${RED}${BOLD}[✗] Failed to move cloudflared to /usr/local/bin/.${NC}"
+            echo -e "${RED}${BOLD}[✗] 无法移动 cloudflared 到 /usr/local/bin/.${NC}"
             return 1
         fi
-        echo -e "${GREEN}${BOLD}[✓] Cloudflared installed successfully.${NC}"
+        echo -e "${GREEN}${BOLD}[✓] Cloudflared 安装成功.${NC}"
         return 0
     }
 
     install_ngrok() {
         if command -v ngrok >/dev/null 2>&1; then
-            echo -e "${GREEN}${BOLD}[✓] ngrok is already installed.${NC}"
+            echo -e "${GREEN}${BOLD}[✓] ngrok 已经安装.${NC}"
             return 0
         fi
-        echo -e "${YELLOW}${BOLD}[✓] Installing ngrok...${NC}"
+        echo -e "${YELLOW}${BOLD}[✓] 正在安装 ngrok...${NC}"
         NGROK_URL="https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-$OS-$NGROK_ARCH.tgz"
         wget -q --show-progress "$NGROK_URL" -O ngrok.tgz
         if [ $? -ne 0 ]; then
-            echo -e "${RED}${BOLD}[✗] Failed to download ngrok.${NC}"
+            echo -e "${RED}${BOLD}[✗] 下载 ngrok 失败.${NC}"
             return 1
         fi
         tar -xzf ngrok.tgz
         if [ $? -ne 0 ]; then
-            echo -e "${RED}${BOLD}[✗] Failed to extract ngrok.${NC}"
+            echo -e "${RED}${BOLD}[✗] 解压 ngrok 失败.${NC}"
             rm ngrok.tgz
             return 1
         fi
         mv ngrok /usr/local/bin/
         if [ $? -ne 0 ]; then
-            echo -e "${RED}${BOLD}[✗] Failed to move ngrok to /usr/local/bin/.${NC}"
+            echo -e "${RED}${BOLD}[✗] 无法移动 ngrok 到 /usr/local/bin/.${NC}"
             rm ngrok.tgz
             return 1
         fi
         rm ngrok.tgz
-        echo -e "${GREEN}${BOLD}[✓] ngrok installed successfully.${NC}"
+        echo -e "${GREEN}${BOLD}[✓] ngrok 安装成功.${NC}"
         return 0
     }
 
@@ -250,7 +251,7 @@ else
 
     start_tunnel() {
         if install_cloudflared; then
-            echo -e "\n${CYAN}${BOLD}[✓] Starting cloudflared tunnel...${NC}"
+            echo -e "\n${CYAN}${BOLD}[✓] 正在启动 cloudflared 隧道...${NC}"
             cloudflared tunnel --url http://localhost:${PORT:-3000} > cloudflared_output.log 2>&1 &
             TUNNEL_PID=$!
             counter=0
@@ -258,30 +259,30 @@ else
             while [ $counter -lt $MAX_WAIT ]; do
                 FORWARDING_URL=$(grep -o 'https://[^ ]*\.trycloudflare.com' cloudflared_output.log | head -n1)
                 if [ -n "$FORWARDING_URL" ]; then
-                    echo -e "${GREEN}${BOLD}[✓] Cloudflared tunnel started successfully.\n${NC}"
+                    echo -e "${GREEN}${BOLD}[✓] Cloudflared 隧道启动成功.\n${NC}"
                     return 0
                 fi
                 sleep 1
                 counter=$((counter + 1))
             done
-            echo -e "${RED}${BOLD}[✗] Timeout waiting for cloudflared URL.${NC}"
+            echo -e "${RED}${BOLD}[✗] 等待 cloudflared URL 超时.${NC}"
             kill $TUNNEL_PID 2>/dev/null || true
         else
-            echo -e "\n${RED}${BOLD}[✗] Failed to install cloudflared, Trying using ngrok${NC}"
+            echo -e "\n${RED}${BOLD}[✗] 安装 cloudflared 失败，尝试使用 ngrok${NC}"
         fi
 
         if install_ngrok; then
             while true; do
-                echo -e "\n${YELLOW}${BOLD}To get your authtoken:${NC}"
-                echo "1. Sign up or log in at https://dashboard.ngrok.com"
-                echo "2. Go to 'Your Authtoken' section: https://dashboard.ngrok.com/get-started/your-authtoken"
-                echo "3. Click on the eye icon to reveal your ngrok auth token"
-                echo "4. Copy that auth token and paste it in the prompt below"
-                echo -e "\n${BOLD}Please enter your ngrok authtoken:${NC}"
+                echo -e "\n${YELLOW}${BOLD}获取authtoken步骤:${NC}"
+                echo "1. 访问 https://dashboard.ngrok.com 注册或登录"
+                echo "2. 进入'Your Authtoken'页面: https://dashboard.ngrok.com/get-started/your-authtoken"
+                echo "3. 点击眼睛图标显示您的ngrok auth token"
+                echo "4. 复制token并粘贴到下方提示符"
+                echo -e "\n${BOLD}请输入您的ngrok authtoken:${NC}"
                 read -p "> " NGROK_TOKEN
             
                 if [ -z "$NGROK_TOKEN" ]; then
-                    echo -e "${RED}${BOLD}[✗] No token provided. Please enter a valid token.${NC}"
+                    echo -e "${RED}${BOLD}[✗] 未提供token，请输入有效token${NC}"
                     continue
                 fi
                 pkill -f ngrok || true
@@ -289,10 +290,10 @@ else
             
                 ngrok authtoken "$NGROK_TOKEN"
                 if [ $? -eq 0 ]; then
-                    echo -e "${GREEN}[✓] Successfully authenticated ngrok!${NC}"
+                    echo -e "${GREEN}[✓] ngrok认证成功!${NC}"
                     break
                 else
-                    echo -e "${RED}[✗] Authentication failed. Please check your token and try again.${NC}"
+                    echo -e "${RED}[✗] 认证失败，请检查token后重试${NC}"
                 fi
             done
 
@@ -312,75 +313,75 @@ else
             fi
 
             if [ -n "$FORWARDING_URL" ]; then
-                echo -e "${GREEN}${BOLD}[✓] ngrok tunnel started successfully.${NC}"
+                echo -e "${GREEN}${BOLD}[✓] ngrok 隧道启动成功.${NC}"
                 return 0
             else
-                echo -e "${RED}${BOLD}[✗] Failed to extract URL from ngrok.${NC}"
+                echo -e "${RED}${BOLD}[✗] 无法从 ngrok 获取 URL.${NC}"
                 kill $TUNNEL_PID 2>/dev/null || true
             fi
         else
-            echo -e "${RED}${BOLD}[✗] Failed to install ngrok.${NC}"
+            echo -e "${RED}${BOLD}[✗] 安装 ngrok 失败.${NC}"
         fi
 
-        echo -e "${RED}${BOLD}[✗] Both cloudflared and ngrok failed to start the tunnel.${NC}"
+        echo -e "${RED}${BOLD}[✗] cloudflared 和 ngrok 都无法启动隧道.${NC}"
         return 1
     }
 
     start_tunnel
     if [ $? -eq 0 ]; then
-        echo -e "${GREEN}${BOLD}[✓] Success! Please visit this website and log in using your email:${NC} ${CYAN}${BOLD}${FORWARDING_URL}${NC}"
+        echo -e "${GREEN}${BOLD}[✓] 成功！请访问此网站并使用您的邮箱登录:${NC} ${CYAN}${BOLD}${FORWARDING_URL}${NC}"
     else
-        echo -e "\n${BLUE}${BOLD}[✓] Don't worry, you can use this manual method. Please follow these instructions:${NC}"
-        echo "1. Open this same WSL/VPS or GPU server on another tab"
-        echo "2. Paste this command into this terminal: ngrok http $PORT"
-        echo "3. It will show a link similar to this: https://xxxx.ngrok-free.app"
-        echo "4. Visit this website and login using your email, this website may take 30 sec to load."
-        echo "5. Now go back to the previous tab, you will see everything will run fine"
+        echo -e "\n${BLUE}${BOLD}[✓] 别担心，您可以使用这个手动方法。请按照以下步骤操作:${NC}"
+        echo "1. 在另一个标签页中打开相同的 WSL/VPS 或 GPU 服务器"
+        echo "2. 在终端中粘贴此命令: ngrok http $PORT"
+        echo "3. 它会显示一个类似这样的链接: https://xxxx.ngrok-free.app"
+        echo "4. 访问该网站并使用您的邮箱登录，网站可能需要 30 秒才能加载"
+        echo "5. 然后返回之前的标签页，您会看到一切正常运行"
     fi
 
     cd ..
 
-    echo -e "\n${CYAN}${BOLD}[↻] Waiting for you to complete the login process...${NC}"
+    echo -e "\n${CYAN}${BOLD}[↻] 等待您完成登录过程...${NC}"
     while [ ! -f "modal-login/temp-data/userData.json" ]; do
         sleep 3
     done
     
-    echo -e "${GREEN}${BOLD}[✓] Success! The userData.json file has been created. Proceeding with remaining setups...${NC}"
+    echo -e "${GREEN}${BOLD}[✓] 成功！userData.json 文件已创建。正在进行剩余设置...${NC}"
     rm -f server.log cloudflared_output.log ngrok_output.log ngrok_output_alt.log
 
     ORG_ID=$(awk 'BEGIN { FS = "\"" } !/^[ \t]*[{}]/ { print $(NF - 1); exit }' modal-login/temp-data/userData.json)
-    echo -e "\n${CYAN}${BOLD}[✓] ORG_ID has been set to: $ORG_ID\n${NC}"
+    echo -e "\n${CYAN}${BOLD}[✓] ORG_ID 已设置为: $ORG_ID\n${NC}"
 
-    echo -e "${CYAN}${BOLD}[✓] Waiting for API key to become activated...${NC}"
+    echo -e "${CYAN}${BOLD}[✓] 等待 API 密钥激活...${NC}"
     while true; do
         STATUS=$(curl -s "http://localhost:3000/api/get-api-key-status?orgId=$ORG_ID")
         if [[ "$STATUS" == "activated" ]]; then
-            echo -e "${GREEN}${BOLD}[✓] Success! API key is activated! Proceeding...\n${NC}"
+            echo -e "${GREEN}${BOLD}[✓] 成功！API 密钥已激活！继续进行...\n${NC}"
             break
         else
-            echo "[↻] Waiting for API key to be activated..."
+            echo "[↻] 正在等待 API 密钥激活..."
             sleep 5
         fi
     done
 fi
 
-echo -e "${CYAN}${BOLD}[✓] Installing required Python packages, may take few mins depending on your internet speed...${NC}"
+echo -e "${CYAN}${BOLD}[✓] 正在安装所需的 Python 包，根据网络速度可能需要几分钟...${NC}"
 pip install --disable-pip-version-check -q -r "$ROOT"/requirements-hivemind.txt > /dev/null
 pip install --disable-pip-version-check -q -r "$ROOT"/requirements.txt > /dev/null
 
-echo -e "${GREEN}${BOLD}>>> Awesome, All packages installed successfully!\n${NC}"
+echo -e "${GREEN}${BOLD}>>> 太棒了，所有包都安装成功！\n${NC}"
 
 if [ -z "$CONFIG_PATH" ]; then
     if command -v nvidia-smi &> /dev/null || [ -d "/proc/driver/nvidia" ]; then
-        echo -e "${GREEN}${BOLD}[✓] GPU detected, using GPU configuration${NC}"
+        echo -e "${GREEN}${BOLD}[✓] 检测到 GPU，使用 GPU 配置${NC}"
         CONFIG_PATH="$ROOT/hivemind_exp/configs/gpu/grpo-qwen-2.5-0.5b-deepseek-r1.yaml"
-        echo -e "${CYAN}${BOLD}[✓] Config file : ${BOLD}$CONFIG_PATH\n${NC}"
-        echo -e "${CYAN}${BOLD}[✓] Installing GPU-specific requirements, may take few mins depending on your internet speed...${NC}"
+        echo -e "${CYAN}${BOLD}[✓] 配置文件 : ${BOLD}$CONFIG_PATH\n${NC}"
+        echo -e "${CYAN}${BOLD}[✓] 正在安装 GPU 特定的依赖，根据网络速度可能需要几分钟...${NC}"
         pip install --disable-pip-version-check -q -r "$ROOT"/requirements_gpu.txt
     else
-        echo -e "${YELLOW}${BOLD}[✓] No GPU detected, using CPU configuration${NC}"
+        echo -e "${YELLOW}${BOLD}[✓] 未检测到 GPU，使用 CPU 配置${NC}"
         CONFIG_PATH="$ROOT/hivemind_exp/configs/mac/grpo-qwen-2.5-0.5b-deepseek-r1.yaml"
-        echo -e "${CYAN}${BOLD}[✓] Config file : ${BOLD}$CONFIG_PATH\n${NC}"
+        echo -e "${CYAN}${BOLD}[✓] 配置文件 : ${BOLD}$CONFIG_PATH\n${NC}"
     fi
 fi
 
@@ -388,16 +389,16 @@ fi
 if [ -n "${HF_TOKEN}" ]; then
     HUGGINGFACE_ACCESS_TOKEN=${HF_TOKEN}
 else
-    read -p "Would you like to push models you train in the RL swarm to the Hugging Face Hub? [y/N] " yn
+    read -p "您想要将在 RL swarm 中训练的模型推送到 Hugging Face Hub 吗？[y/N] " yn
     yn=${yn:-N}
     case $yn in
-        [Yy]* ) read -p "Enter your Hugging Face access token: " HUGGINGFACE_ACCESS_TOKEN;;
+        [Yy]* ) read -p "请输入您的 Hugging Face 访问令牌: " HUGGINGFACE_ACCESS_TOKEN;;
         [Nn]* ) HUGGINGFACE_ACCESS_TOKEN="None";;
-        * ) echo -e "${YELLOW}>>> No answer was given, so NO models will be pushed to the Hugging Face Hub.${NC}" && HUGGINGFACE_ACCESS_TOKEN="None";;
+        * ) echo -e "${YELLOW}>>> 未给出答案，因此不会将模型推送到 Hugging Face Hub.${NC}" && HUGGINGFACE_ACCESS_TOKEN="None";;
     esac
 fi
 
-echo -e "\n${GREEN}${BOLD}[✓] Good luck in the swarm! Your training session is about to begin.\n${NC}"
+echo -e "\n${GREEN}${BOLD}[✓] 祝您在 swarm 中好运！您的训练会话即将开始.\n${NC}"
 [ "$(uname)" = "Darwin" ] && sed -i '' -E 's/(startup_timeout: *float *= *)[0-9.]+/\1120/' $(python3 -c "import hivemind.p2p.p2p_daemon as m; print(m.__file__)") || sed -i -E 's/(startup_timeout: *float *= *)[0-9.]+/\1120/' $(python3 -c "import hivemind.p2p.p2p_daemon as m; print(m.__file__)")
 sleep 2
 
