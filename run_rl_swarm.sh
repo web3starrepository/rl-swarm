@@ -271,7 +271,7 @@ else
     start_tunnel() {
         if install_cloudflared; then
             echo -e "\n${CYAN}${BOLD}[✓] Starting cloudflared tunnel...${NC}"
-            cloudflared tunnel --url http://localhost:$PORT > cloudflared_output.log 2>&1 &
+            cloudflared tunnel --url http://localhost:${PORT:-3000} > cloudflared_output.log 2>&1 &
             TUNNEL_PID=$!
             counter=0
             MAX_WAIT=30
