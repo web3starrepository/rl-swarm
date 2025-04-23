@@ -353,7 +353,7 @@ else
 
     echo -e "${CYAN}${BOLD}[✓] Waiting for API key to become activated...${NC}"
     while true; do
-        STATUS=$(curl -s "http://localhost:$PORT/api/get-api-key-status?orgId=$ORG_ID")
+        STATUS=$(curl -s "http://localhost:3000/api/get-api-key-status?orgId=$ORG_ID")
         if [[ "$STATUS" == "activated" ]]; then
             echo -e "${GREEN}${BOLD}[✓] Success! API key is activated! Proceeding...\n${NC}"
             break
