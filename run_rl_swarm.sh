@@ -78,6 +78,7 @@ if [ -f "modal-login/temp-data/userData.json" ]; then
     MAX_WAIT=30  
     
     # 原等待逻辑（MAX_WAIT=30）
+    # 原错误循环结构已修正为：
     for ((i = 0; i < MAX_WAIT; i++)); do
     if grep -q "Local:        http://localhost:" server.log; then
     PORT=$(grep "Local:        http://localhost:" server.log | sed -n 's/.*http:\/\/localhost:\([0-9]*\).*/\1/p')
@@ -85,6 +86,7 @@ if [ -f "modal-login/temp-data/userData.json" ]; then
     echo -e "${GREEN}${BOLD}[✓] Server is running successfully on port $PORT.${NC}"
     break
     fi
+    fi  # 已添加缺失的fi
     sleep 1
     done
     
