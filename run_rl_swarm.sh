@@ -23,7 +23,7 @@ export HF_HUB_DOWNLOAD_TIMEOUT=120
 # HF_ENDPOINT=${HF_ENDPOINT:-$DEFAULT_HF_ENDPOINT}
 # export HF_ENDPOINT
 # export HF_HOME="$HOME/.cache/huggingface"
-# export PIP_INDEX_URL="https://pypi.tuna.tsinghua.edu.cn/simple"
+export PIP_INDEX_URL="https://pypi.tuna.tsinghua.edu.cn/simple"
 # export HF_DATASETS_CACHE="$HOME/.cache/huggingface/datasets"
 # export TRANSFORMERS_CACHE="$HOME/.cache/huggingface/transformers"
 
