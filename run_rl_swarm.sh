@@ -749,9 +749,17 @@ else
     echo -n "> "
     read yn
     yn=${yn:-N}
-        [Yy]* ) read -p "Enter your Hugging Face access token: " HUGGINGFACE_ACCESS_TOKEN;;
-        [Nn]* ) HUGGINGFACE_ACCESS_TOKEN="None";;
-        * ) echo -e "${YELLOW}>>> No answer was given, so NO models will be pushed to the Hugging Face Hub.${NC}" && HUGGINGFACE_ACCESS_TOKEN="None";;
+    case "$yn" in
+        [Yy]* ) 
+            read -p "Enter your Hugging Face access token: " HUGGINGFACE_ACCESS_TOKEN
+            ;;
+        [Nn]* ) 
+            HUGGINGFACE_ACCESS_TOKEN="None"
+            ;;
+        * ) 
+            echo -e "${YELLOW}>>> No answer was given, so NO models will be pushed to the Hugging Face Hub.${NC}"
+            HUGGINGFACE_ACCESS_TOKEN="None"
+            ;;
     esac
 fi
 
