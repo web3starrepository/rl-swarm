@@ -755,6 +755,27 @@ else
     esac
 fi
 
+echo -e "\n${CYAN}${BOLD}This is your preferred ENV for this training session :\n${NC}"
+
+print_env() {
+    local name=$1
+    local value=${!name}
+    value=${value:-"Not Available"}
+    echo -e "+ ${PURPLE}${BOLD}${name}${NC} : ${value}"
+}
+
+print_env "HF_TOKEN"
+print_env "ORG_ID"
+print_env "IDENTITY_PATH"
+print_env "SWARM_CONTRACT"
+print_env "CONFIG_PATH"
+print_env "GAME"
+print_env "PUB_MULTI_ADDRS"
+print_env "PEER_MULTI_ADDRS"
+print_env "HOST_MULTI_ADDRS"
+
+sleep 5
+
 echo -e "\n${GREEN}${BOLD}[✓] Good luck in the swarm! Your training session is about to begin.\n${NC}"
 [ "$(uname)" = "Darwin" ] && sed -i '' -E 's/(startup_timeout: *float *= *)[0-9.]+/\1120/' $(python3 -c "import hivemind.p2p.p2p_daemon as m; print(m.__file__)") || sed -i -E 's/(startup_timeout: *float *= *)[0-9.]+/\1120/' $(python3 -c "import hivemind.p2p.p2p_daemon as m; print(m.__file__)")
 [ "$(uname)" = "Darwin" ] && sed -i '' -e '/bootstrap_timeout: Optional\[float\] = None/s//bootstrap_timeout: float = 120/' $(python3 -c 'import hivemind.dht.node as m; print(m.__file__)') || sed -i -e '/bootstrap_timeout: Optional\[float\] = None/s//bootstrap_timeout: float = 120/' $(python3 -c 'import hivemind.dht.node as m; print(m.__file__)')
