@@ -76,6 +76,7 @@ class WalletSwarmCoordinator(SwarmCoordinator):
             ).build_transaction(self._default_gas()),
         )
 
+    # reward 最终会通过 submit_reward 或 DHT 上报，可以在 reward 上报前拦截并替换 reward 数值
     def submit_reward(self, round_num, stage_num, reward, peer_id):
         send_chain_txn(
             self.web3,
